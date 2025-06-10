@@ -1,13 +1,17 @@
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Sidebar from "@/components/Sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
+import { useRoleProtection } from "../../hooks/useRoleProtection";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { loading, authorized } = useRoleProtection(["admin", "user"]);
+
+  if (loading) return <p>Verificando permissões...</p>;
+  if (!authorized) return null;
 
   return (
-    <ProtectedRoute>
+    <>
       <Head>
         <title>Dashboard | Marlu 14</title>
       </Head>
@@ -29,9 +33,41 @@ export default function Dashboard() {
                 componentes aqui.
               </p>
             </div>
+            <div className="flex gap-4 mt-4">
+              <div className="flex-1 rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">Junho 2025</h2>
+                <p>Total de aluguel: 0 </p>
+              </div>
+              <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+              <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+              <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+            </div>
+            {/* <div className="flex gap-4 mt-4">
+              <div className="flex-1 rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+              <div className="flex-1 rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+              <div className="flex-1 rounded-xl bg-white p-6 shadow-md">
+                <h2 className="mb-4 text-lg font-semibold">01</h2>
+                <p>Total de aluguel</p>
+              </div>
+            </div> */}
           </main>
         </div>
       </div>
-    </ProtectedRoute>
+    </>
   );
 }

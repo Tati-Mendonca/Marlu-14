@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { saveUserIfNotExists } from "./user";
 
 function isFirebaseError(error: unknown): error is FirebaseError {
   return (
@@ -21,9 +22,10 @@ function isFirebaseError(error: unknown): error is FirebaseError {
 export const login = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await saveUserIfNotExists(userCredential.user);
     return { user: userCredential.user, error: null };
   } catch (error) {
-    if (isFirebaseError(error)) {
+    if (error instanceof FirebaseError) {
       const errorMessage = getFirebaseErrorMessage(error.code);
       return { user: null, error: errorMessage };
     }
@@ -35,9 +37,10 @@ export const loginWithGoogle = async () => {
   try {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
+     await saveUserIfNotExists(result.user);
     return { user: result.user, error: null };
   } catch (error) {
-    if (isFirebaseError(error)) {
+    if (error instanceof FirebaseError) {
       const errorMessage = getFirebaseErrorMessage(error.code);
       return { user: null, error: errorMessage };
     }
@@ -50,7 +53,7 @@ export const logout = async () => {
     await signOut(auth);
     return { error: null };
   } catch (error) {
-    if (isFirebaseError(error)) {
+    if (error instanceof FirebaseError) {
       const errorMessage = getFirebaseErrorMessage(error.code);
       return { error: errorMessage };
     }

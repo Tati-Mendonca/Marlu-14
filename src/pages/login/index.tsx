@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login, loginWithGoogle } from "@/lib/auth";
+import { login, loginWithGoogle } from "@/services/auth";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
@@ -42,29 +42,29 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-[var(--color-primary)]">
       <div className="w-full max-w-max p-8 bg-white rounded-2xl shadow-lg">
         <div className="flex items-center justify-center gap-2 text-primary mb-6">
-          <MapPin className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">Marlu 14</h1>
+          <MapPin className="w-6 h-6 stroke-[2.5] stroke-[var(--color-secondary)]" />
+          <h1 className="text-2xl font-semibold">Marlu 14</h1>
         </div>
         <form onSubmit={handleLogin} className="space-y-2">
           <div>
-            <label className="relative bg-white ml-2 px-0.5 text-gray-500 block mb-[-10px] text-sm font-foreground w-9.5">
+            <label className="relative bg-white ml-2 px-0.5 text-gray-700 block mb-[-10px] text-sm font-foreground w-9.5">
               Email
             </label>
             <input
               type="email"
-              className="w-full px-4 py-2 border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="relative bg-white ml-2 px-0.5 text-gray-500 block mb-[-10px] text-sm font-foreground w-10.5">
+            <label className="relative bg-white ml-2 px-0.5 text-gray-700 block mb-[-10px] text-sm font-foreground w-10.5">
               Senha
             </label>
             <input
               type="password"
-              className="w-full px-4 py-2 mb-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 mb-2 border  border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
