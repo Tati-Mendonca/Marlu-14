@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getIdToken, onAuthStateChanged, User } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { auth, db } from "@/config/firebase";
+import { auth } from "@/config/firebase";
 import Sidebar from "@/components/Sidebar";
-import { Search } from "lucide-react";
+import { Search, UserRound, X } from "lucide-react";
+import { ShieldUser } from "lucide-react";
 
 interface UserData {
   uid: string;
@@ -58,11 +58,29 @@ export default function UsersAdminPage() {
     }
   };
 
-  const toggleRole = async (uid: string, currentRole: string) => {
-    const newRole = currentRole === "admin" ? "user" : "admin";
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { role: newRole });
-    fetchUsers();
+  const toggleRole = async (uid: string, fromRole: string, toRole: string) => {
+    const confirmChange = confirm(
+      `Tem certeza que deseja alterar de ${fromRole.toUpperCase()} para ${toRole.toUpperCase()}?`
+    );
+    if (!confirmChange) return;
+
+    try {
+      const token = await currentUser?.getIdToken();
+      const res = await fetch("/api/users/setRole", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ uid, newRole: toRole }),
+      });
+
+      if (!res.ok) throw new Error("Erro ao definir role");
+
+      fetchUsers();
+    } catch (error) {
+      console.error("Erro ao atualizar role:", error);
+    }
   };
 
   const filteredUsers = users.filter((user) => {
@@ -93,42 +111,71 @@ export default function UsersAdminPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white divide-y divide-gray-700 shadow-md rounded-xl">
-            <thead className="bg-primary">
-              <tr>
-                <th className="py-3 px-4 text-left">Nome</th>
-                <th className="py-3 px-4 text-left">Email</th>
-                <th className="py-3 px-4 text-left">Função</th>
-                <th className="py-3 px-4">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map((user) => (
-                <tr key={user.uid}>
-                  <td className="py-2 px-4">{user.name || "-"}</td>
-                  <td className="py-2 px-4">{user.email}</td>
-                  <td className="py-2 px-4 capitalize">{user.role}</td>
-                  <td className="py-2 px-4 text-center">
-                    {user.uid !== currentUser?.uid && (
-                      <button
-                        onClick={() => toggleRole(user.uid, user.role)}
-                        className="bg-secondary text-white px-3 py-1 rounded hover:bg-blue-700"
-                      >
-                        Tornar {user.role === "admin" ? "User" : "Admin"}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {filteredUsers.length === 0 && (
+          <div className="rounded-xl overflow-hidden shadow-md">
+            <table className="min-w-full bg-white divide-y divide-gray-700">
+              <thead className="bg-gray-200">
                 <tr>
-                  <td className="py-2 px-4 text-center" colSpan={4}>
-                    Nenhum usuário encontrado.
-                  </td>
+                  <th className="py-3 px-4 text-left">Nome</th>
+                  <th className="py-3 px-4 text-left">Email</th>
+                  <th className="py-3 px-4 text-left">Função</th>
+                  <th className="py-3 px-4 text-left">Atualizar</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.uid}>
+                    <td className="py-2 px-4">{user.name || "-"}</td>
+                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4 capitalize flex items-center gap-2">
+                      {user.role === "admin" && (
+                        <ShieldUser className="w-4 h-4" />
+                      )}
+                      {user.role === "user" && (
+                        <UserRound className="w-4 h-4" />
+                      )}
+                      {user.role}
+                    </td>
+                    <td className="py-2 text-center">
+                      {user.uid !== currentUser?.uid ? (
+                        <div className="flex justify-center gap-2">
+                          {user.role !== "admin" && (
+                            <button
+                              onClick={() =>
+                                toggleRole(user.uid, "user", "admin")
+                              }
+                              className="px-3 capitalize flex items-center gap-2 cursor-pointer border-2 hover:border-[var(--color-secondary)] rounded"
+                            >
+                              <ShieldUser className="w-4 h-4" /> Admin
+                            </button>
+                          )}
+
+                          {user.role === "admin" && (
+                            <button
+                              onClick={() =>
+                                toggleRole(user.uid, "admin", "user")
+                              }
+                              className="px-3 capitalize flex items-center gap-2 cursor-pointer border-2 hover:border-[var(--color-secondary)] rounded"
+                            >
+                              <X className="w-4 h-4" /> Remover
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 italic"></span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {filteredUsers.length === 0 && (
+                  <tr>
+                    <td className="py-2 px-4 text-center" colSpan={4}>
+                      Nenhum usuário encontrado.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

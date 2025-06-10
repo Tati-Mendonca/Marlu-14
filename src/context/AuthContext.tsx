@@ -32,14 +32,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-
         try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          const userData = userDoc.data();
-          console.log("ROLE DO USUÁRIO:", userData?.role);
-          setRole(userData?.role || null);
+          // Garante token atualizado com custom claims
+          const idTokenResult = await user.getIdTokenResult(true);
+
+          const customRole = idTokenResult.claims?.role ?? null;
+          console.log("🔥 Custom Claim role:", customRole);
+
+          // Pega role do Firestore como fallback
+          let firestoreRole: string | null = null;
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            firestoreRole = userDoc.data()?.role ?? null;
+            console.log("📦 Firestore role:", firestoreRole);
+          } catch (e) {
+            console.warn("Erro ao buscar role do Firestore:", e);
+          }
+
+          const finalRole = customRole || firestoreRole || "user";
+
+          setRole(typeof finalRole === "string" ? finalRole : null);
         } catch (err) {
-          console.error("Erro ao buscar documento do usuário:", err);
+          console.error("Erro ao obter token/result:", err);
+          setRole(null);
         }
       } else {
         setUser(null);
@@ -51,23 +66,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => unsubscribe();
   }, []);
-  //   const unsubscribe = onAuthStateChanged(auth, async (user) => {
-  //     if (user) {
-  //       setUser(user);
-
-  //       const userDoc = await getDoc(doc(db, "users", user.uid));
-  //       const userData = userDoc.data();
-  //       setRole(userData?.role || null);
-  //     } else {
-  //       setUser(null);
-  //       setRole(null);
-  //     }
-
-  //     setLoading(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>
