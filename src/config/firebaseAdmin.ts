@@ -14,4 +14,3 @@ const adminAuth = admin.auth();
 const adminDB = admin.firestore();
 
 export { adminAuth, adminDB };
-

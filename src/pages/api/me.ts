@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { adminAuth, adminDB } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDB } from "@/config/firebaseAdmin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const token = req.headers.authorization?.split("Bearer ")[1];

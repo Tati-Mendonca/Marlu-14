@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { adminAuth, adminDB } from "@/lib/firebaseAdmin";
+import { adminAuth, adminDB } from "@/config/firebaseAdmin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end("Method not allowed");

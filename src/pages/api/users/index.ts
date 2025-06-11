@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { adminDB } from "@/lib/firebaseAdmin";
+import { adminDB } from "@/config/firebaseAdmin";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
