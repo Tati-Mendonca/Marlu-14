@@ -33,18 +33,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         setUser(user);
         try {
-          // Garante token atualizado com custom claims
           const idTokenResult = await user.getIdTokenResult(true);
 
           const customRole = idTokenResult.claims?.role ?? null;
-          console.log("🔥 Custom Claim role:", customRole);
 
-          // Pega role do Firestore como fallback
           let firestoreRole: string | null = null;
           try {
             const userDoc = await getDoc(doc(db, "users", user.uid));
             firestoreRole = userDoc.data()?.role ?? null;
-            console.log("📦 Firestore role:", firestoreRole);
           } catch (e) {
             console.warn("Erro ao buscar role do Firestore:", e);
           }

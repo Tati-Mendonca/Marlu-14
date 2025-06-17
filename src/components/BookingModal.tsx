@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
-import { searchCustomersByName } from "@/services/customer";
+import { createCustomer, searchCustomersByName } from "@/services/customer";
 import { getAuth } from "firebase/auth";
-import { Booking, BookingStatus } from "@/types/booking";
+import { Booking, BookingInput, BookingStatus } from "@/types/booking";
 import { Customer } from "@/types/customer";
+import { normalizeDate } from "@/utils/Date";
+import { X } from "lucide-react";
+import { createBooking, updateBooking } from "@/services/booking";
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (booking: Booking) => void;
+  onSave: (booking: BookingInput) => void;
   bookingToEdit?: Booking | null;
 }
 
@@ -20,12 +23,10 @@ export default function BookingModal({
   const [customerName, setCustomerName] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [suggestions, setSuggestions] = useState<Customer[]>([]);
-
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [price, setPrice] = useState<number>(0);
-  const [days, setDays] = useState(0);
-  const [status, setStatus] = useState<BookingStatus>("reservado");
+  const [status, setStatus] = useState<BookingStatus>("Reservado");
 
   const formatDate = (date: string | Date): string => {
     const d = typeof date === "string" ? new Date(date) : date;
@@ -35,11 +36,10 @@ export default function BookingModal({
   useEffect(() => {
     if (bookingToEdit) {
       setCustomerId(bookingToEdit.customerId);
-      setCustomerName("Cliente selecionado");
+      setCustomerName(bookingToEdit.customerName);
       setCheckIn(formatDate(bookingToEdit.checkIn));
       setCheckOut(formatDate(bookingToEdit.checkOut));
       setPrice(bookingToEdit.price);
-      setDays(bookingToEdit.days);
       setStatus(bookingToEdit.status);
     } else {
       setCustomerId("");
@@ -47,16 +47,25 @@ export default function BookingModal({
       setCheckIn("");
       setCheckOut("");
       setPrice(0);
-      setDays(0);
-      setStatus("reservado");
+      setStatus("Reservado");
     }
   }, [bookingToEdit]);
 
   const handleCustomerSearch = async (name: string) => {
     setCustomerName(name);
+    setCustomerId("");
+
     if (name.length >= 2) {
-      const results = await searchCustomersByName(name);
+      const results = await searchCustomersByName(name.trim());
       setSuggestions(results);
+
+      const exactMatch = results.find(
+        (customer) => customer.name.toLowerCase() === name.trim().toLowerCase()
+      );
+
+      if (exactMatch) {
+        setCustomerId(exactMatch.id);
+      }
     } else {
       setSuggestions([]);
     }
@@ -68,40 +77,96 @@ export default function BookingModal({
     setSuggestions([]);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const auth = getAuth();
-    const userId = auth.currentUser?.uid || "usuario-desconhecido";
-
-    const booking: Booking = {
-      id: bookingToEdit?.id,
-      customerId,
+    const user = auth.currentUser;
+    const userId = user?.uid || "usuario-desconhecido";
+    const bookingByName = user?.displayName || user?.email || "desconhecido";
+    const checkInDate = new Date(checkIn + "T00:00:00");
+    const checkOutDate = new Date(checkOut + "T00:00:00");
+    const diffInMs = checkOutDate.getTime() - checkInDate.getTime();
+    const diffInDays = Math.max(
+      Math.floor(diffInMs / (1000 * 60 * 60 * 24)),
+      1
+    );
+    let finalCustomerId = customerId;
+    if (!finalCustomerId && customerName.trim().length > 0) {
+      try {
+        const newCustomer = {
+          name: customerName.trim(),
+          document: "",
+          phone: "",
+          createdAt: new Date(),
+        };
+        const newCustomerId = await createCustomer(newCustomer);
+        finalCustomerId = newCustomerId;
+      } catch (err) {
+        console.error("Erro ao criar cliente automaticamente:", err);
+        return;
+      }
+    }
+    if (!finalCustomerId) {
+      console.error("Erro: customerId está indefinido. Cancelando operação.");
+      return;
+    }
+    const booking: BookingInput = {
+      customerId: finalCustomerId,
+      customerName: customerName.trim(),
       userId,
-      checkIn: new Date(checkIn),
-      checkOut: new Date(checkOut),
+      bookingByName,
+      checkIn: normalizeDate(checkIn),
+      checkOut: normalizeDate(checkOut),
       price,
-      days,
+      days: diffInDays,
       status,
     };
 
-    onSave(booking);
-    onClose();
+    if (bookingToEdit && bookingToEdit.id) {
+      const updatedBooking = {
+        ...booking,
+      };
+
+      await updateBooking(bookingToEdit.id, updatedBooking);
+      onSave(updatedBooking);
+      onClose();
+      return;
+    } else {
+      await createBooking(booking);
+      onClose();
+    }
+
+    // onSave(savedBooking);
+    //onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-md w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4">
-          {bookingToEdit ? "Editar Reserva" : "Nova Reserva"}
-        </h2>
-        <div className="relative mb-2">
-          <label>
-            Nome:
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] transition-opacity duration-300">
+      <form
+        method="dialog"
+        className="bg-white p-6 rounded-2xl w-full max-w-md space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
+        <header className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">
+            {bookingToEdit ? "Editar Reserva" : "Cadastrar Reserva"}
+          </h2>
+          <button type="button" onClick={onClose} aria-label="Fechar">
+            <X />
+          </button>
+        </header>
+
+        <div className="relative">
+          <label className="block">
+            <span className="text-sm">Nome:</span>
             <input
               type="text"
               placeholder="Buscar cliente pelo nome"
-              className="w-full p-2 border"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={customerName}
               onChange={(e) => handleCustomerSearch(e.target.value)}
             />
@@ -121,42 +186,45 @@ export default function BookingModal({
             </ul>
           )}
         </div>
-        <div className="flex gap-4">
-          <label>
-            Data de Entrada:
+
+        <fieldset className="flex gap-4">
+          <label className="flex-1 text-sm">
+            Entrada
             <input
               type="date"
-              className="w-full p-2 border mb-2"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={checkIn}
               onChange={(e) => setCheckIn(e.target.value)}
             />
           </label>
-          <label>
-            Data de Saida:
+
+          <label className="flex-1 text-sm">
+            Saida
             <input
               type="date"
-              className="w-full p-2 border mb-2"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
             />
           </label>
-        </div>
-        <div className="flex gap-4">
-          <label>
-            Preço:
+        </fieldset>
+
+        <fieldset className="flex gap-4">
+          <label className="flex-1 text-sm">
+            Preço
             <input
-              type="string"
+              type="text"
               placeholder="Valor total"
-              className="w-full p-2 border mb-2"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={price}
               onChange={(e) => setPrice(Number(e.target.value))}
             />
           </label>
 
-          <label>
-            Status:
+          <label className="flex-1 text-sm">
+            Status
             <select
-              className="w-full p-2 border mb-4"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={status}
               onChange={(e) => setStatus(e.target.value as BookingStatus)}
             >
@@ -166,21 +234,14 @@ export default function BookingModal({
               <option value="cancelado">Cancelado</option>
             </select>
           </label>
-        </div>
+        </fieldset>
 
-        <div className="flex justify-end gap-2">
-          <button className="bg-gray-300 px-4 py-2 rounded" onClick={onClose}>
-            Cancelar
-          </button>
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded"
-            onClick={handleSubmit}
-            disabled={!customerId}
-          >
+        <footer className="flex justify-end">
+          <button className="bg-[var(--color-secondary)] hover:bg-[var(--color-secondary2)] text-white px-4 py-2 rounded disabled:opacity-50">
             Salvar
           </button>
-        </div>
-      </div>
+        </footer>
+      </form>
     </div>
   );
 }

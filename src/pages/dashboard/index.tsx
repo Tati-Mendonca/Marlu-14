@@ -1,15 +1,26 @@
-import Sidebar from "@/components/Sidebar";
-import { useAuth } from "@/hooks/useAuth";
 import Head from "next/head";
-import { useRoleProtection } from "../../hooks/useRoleProtection";
-import Link from "next/link";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import BookingModal from "@/components/BookingModal";
+import CustomerModal from "@/components/CustomerModal";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { loading, authorized } = useRoleProtection(["admin", "user"]);
+  const [isBookingModalOpen, setBookingModalOpen] = useState(false);
+  const [isCustomerModalOpen, setCustomerModalOpen] = useState(false);
 
-  if (loading) return <p>Verificando permissões...</p>;
-  if (!authorized) return null;
+  const currentYear = new Date().getFullYear();
+  const {
+    totalBookings,
+    totalCustomers,
+    totalRevenue,
+    totalDays,
+    message,
+    handleCreateBooking,
+    handleCreateCustomer,
+  } = useDashboardData(currentYear);
 
   return (
     <>
@@ -36,35 +47,69 @@ export default function Dashboard() {
               </div>
               <div className="flex gap-4 mt-4">
                 <div className="flex-1 rounded-xl bg-white p-6 shadow-md">
-                  <h2 className="mb-4 text-xl font-semibold">Junho 2025</h2>
-                  <p>Dias alugados: 0 </p>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    Ano: {currentYear}
+                  </h2>
+                  <p>Dias alugados: {totalDays} </p>
                 </div>
                 <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
-                  <h2 className="mb-4 text-xl font-semibold">01</h2>
-                  <p className="text-sm">Total de alugueis</p>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {totalBookings}
+                  </h2>
+                  <p className="text-sm">Total de reservas</p>
                 </div>
                 <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
-                  <h2 className="mb-4 text-xl font-semibold">01</h2>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {totalCustomers}
+                  </h2>
                   <p className="text-sm">Total de clientes</p>
                 </div>
                 <div className="flex flex-col justify-center items-center rounded-xl bg-white p-6 shadow-md">
-                  <h2 className="mb-4 text-xl font-semibold">R$ 100,00</h2>
+                  <h2 className="mb-4 text-xl font-semibold">
+                    {totalRevenue.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </h2>
                   <p className="text-sm">Receita do ano</p>
                 </div>
               </div>
             </div>
+            <div className="flex justify-center">
+              {message && (
+                <p className="mt-4 text-2xl text-gray-700 transition-opacity duration-500">
+                  {message}
+                </p>
+              )}
+            </div>
 
-            <div className="flex gap-4 mt-6">
-              <div className="flex-1 border-2 rounded-xl bg-white p-6 shadow-md text-center">
-                <Link href="/booking" className="px-47 py-5">
-                  Reserva
-                </Link>
+            <div className="flex gap-4">
+              <div className="flex-1 border-2 rounded-xl bg-white p-3 shadow-md text-center">
+                <button
+                  onClick={() => setBookingModalOpen(true)}
+                  className="px-46 py-2"
+                >
+                  Nova Reserva
+                </button>
               </div>
-              <div className="flex-1 border-2 rounded-xl bg-white p-6 shadow-md text-center">
-                <Link href="/customer" className="px-47 py-5">
-                  Cliente
-                </Link>
+              <div className="flex-1 border-2 rounded-xl bg-white p-3 shadow-md text-center">
+                <button
+                  onClick={() => setCustomerModalOpen(true)}
+                  className="px-46 py-2"
+                >
+                  Novo Cliente
+                </button>
               </div>
+              <BookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => setBookingModalOpen(false)}
+                onSave={handleCreateBooking}
+              />
+              <CustomerModal
+                isOpen={isCustomerModalOpen}
+                onClose={() => setCustomerModalOpen(false)}
+                onSave={handleCreateCustomer}
+              />
             </div>
           </main>
         </div>

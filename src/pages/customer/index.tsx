@@ -1,48 +1,173 @@
-import { useState } from "react";
-import { createCustomer } from "@/services/customer";
+import { useEffect, useState } from "react";
+import {
+  createCustomer,
+  deleteCustomer,
+  getAllCustomers,
+  updateCustomer,
+} from "@/services/customer";
+import { Customer, CustomerInput } from "@/types/customer";
+import { ChevronLeft, ChevronRight, Pencil, Trash } from "lucide-react";
+import CustomerModal from "@/components/CustomerModal";
 
-export default function Customer() {
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+export default function CustomerPage() {
+  const ITEMS_PER_PAGE = 10;
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [customerToEdit, setCustomerToEdit] = useState<Customer | null>(null);
 
-  const handleCreateCustomer = async () => {
-    setLoading(true);
-    setMessage("");
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const data = await getAllCustomers();
+      setCustomers(data);
+    };
+    fetchCustomers();
+  }, []);
+
+  const totalPages = Math.ceil(customers.length / ITEMS_PER_PAGE);
+  const paginatedCustomers = customers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handleEdit = (customer: Customer) => {
+    setCustomerToEdit(customer);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (customer: CustomerInput & { id?: string }) => {
+    try {
+      if (customer.id) {
+        await updateCustomer(customer.id, customer);
+        setCustomers((prev) =>
+          prev.map((c) => (c.id === customer.id ? { ...c, ...customer } : c))
+        );
+      } else {
+        const id = await createCustomer(customer);
+        const newCustomer: Customer = {
+          id,
+          ...customer,
+          createdAt: new Date(),
+        };
+
+        setCustomers((prev) => [...prev, newCustomer]);
+      }
+    } catch (error) {
+      console.error("Erro ao salvar cliente:", error);
+      alert("Erro ao salvar o cliente. Tente novamente.");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirm = window.confirm(
+      "Tem certeza que deseja excluir este cliente?"
+    );
+    if (!confirm) return;
 
     try {
-      await createCustomer({
-        name: "João Silva",
-        document: "123.456.789-00",
-        phone: "(11) 91234-5678",
-      });
-
-      setMessage("Cliente criado com sucesso!");
+      await deleteCustomer(id);
+      setCustomers((prev) => prev.filter((c) => c.id !== id));
     } catch (error) {
-      setMessage("Erro ao criar cliente. Verifique o console.");
-      console.error(error);
-    } finally {
-      setLoading(false);
+      console.error("Erro ao excluir cliente:", error);
+      alert("Não foi possível excluir o cliente.");
     }
   };
 
   return (
-    <main className="min-h-screen bg-[var(--color-primary)] flex flex-col items-center pt-28 px-4 pb-8 relative">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-semibold py-2">Cadastro de Clientes</h1>
-        <p className="text-sm text-gray-500 mb-4">
-          Informação de todos os clientes que já alugaram o apartamento:
-        </p>
+    <main className="min-h-screen bg-[var(--color-primary)] flex flex-col items-center pt-24 px-4 pb-8">
+      <section className="w-full md:w-auto max-w-5xl">
+        <header className="text-center mb-6">
+          <h1 className="text-2xl font-semibold">Cadastro de Clientes</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Informações essenciais dos clientes que já alugaram o apartamento:
+          </p>
+        </header>
 
-        <button
-          onClick={handleCreateCustomer}
-          disabled={loading}
-          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 disabled:opacity-50"
-        >
-          {loading ? "Salvando..." : "Criar Cliente de Teste"}
-        </button>
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300 text-sm text-gray-700">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-3 font-semibold uppercase tracking-wider">
+                  Nome
+                </th>
+                <th className="px-6 py-3 font-semibold uppercase tracking-wider">
+                  Documento
+                </th>
+                <th className="px-6 py-3 font-semibold uppercase tracking-wider">
+                  Telefone
+                </th>
+                <th className="px-6 py-3 font-semibold uppercase tracking-wider">
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {paginatedCustomers.map((customer) => (
+                <tr key={customer.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {customer.name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {customer.document || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {customer.phone || "-"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap flex gap-2">
+                    <button
+                      onClick={() => handleEdit(customer)}
+                      className="hover:text-[var(--color-secondary2)]"
+                      title="Editar"
+                    >
+                      <Pencil className="size-4 cursor-pointer" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(customer.id)}
+                      className="pl-1 hover:text-[var(--color-danger)]"
+                      title="Excluir"
+                    >
+                      <Trash className="size-4 cursor-pointer" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
-      </div>
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="p-2 rounded hover:text-[var(--color-secondary2)] disabled:opacity-50"
+            aria-label="Página anterior"
+          >
+            <ChevronLeft />
+          </button>
+
+          <span className="text-sm">
+            Página {currentPage} de {totalPages}
+          </span>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="p-2 rounded hover:text-[var(--color-secondary2)] disabled:opacity-50"
+            aria-label="Próxima página"
+          >
+            <ChevronRight />
+          </button>
+        </div>
+      </section>
+      <CustomerModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setCustomerToEdit(null);
+        }}
+        onSave={handleSave}
+        customerToEdit={customerToEdit}
+      />
     </main>
   );
 }

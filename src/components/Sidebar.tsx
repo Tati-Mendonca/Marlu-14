@@ -1,5 +1,13 @@
 import { useAuth } from "@/context/AuthContext";
 import { logout } from "@/services/auth";
+import {
+  CalendarDays,
+  ChartNoAxesCombined,
+  GalleryVerticalEnd,
+  Lock,
+  UserPen,
+  Users,
+} from "lucide-react";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 import router from "next/router";
@@ -19,23 +27,58 @@ export default function Sidebar() {
       </header>
 
       <nav className="space-y-1">
-        <Link href="/dashboard" className="block rounded-lg p-2 hover:bg-muted">
-          Dashboard
-        </Link>
-        <Link href="/booking" className="block rounded-lg p-2 hover:bg-muted">
-          Relatórios
-        </Link>
-        {role === "admin" && (
+        <div className="flex items-center">
+          <ChartNoAxesCombined className="w-4 h-4" />
           <Link
-            href="/admin/users"
+            href="/dashboard"
             className="block rounded-lg p-2 hover:bg-muted"
           >
-            Usuários
+            Dashboard
           </Link>
-        )}
-        <Link href="/client" className="block rounded-lg p-2 hover:bg-muted">
-          Perfil
-        </Link>
+        </div>
+
+        <div className="flex items-center">
+          <GalleryVerticalEnd className="w-4 h-4" />
+          <Link
+            href="/hystoric"
+            className="block rounded-lg p-2 hover:bg-muted"
+          >
+            Histórico
+          </Link>
+        </div>
+        <div className="flex items-center">
+          <CalendarDays className="w-4 h-4" />
+          <Link href="/booking" className="block rounded-lg p-2 hover:bg-muted">
+            Reservas
+          </Link>
+        </div>
+        <div className="flex items-center">
+          <Users className="w-4 h-4" />
+          <Link
+            href="/customer"
+            className="block rounded-lg p-2 hover:bg-muted"
+          >
+            Clientes
+          </Link>
+        </div>
+
+        <div className="flex items-center">
+          <Lock className="w-4 h-4" />
+          {role === "admin" && (
+            <Link
+              href="/admin/users"
+              className="block rounded-lg p-2 hover:bg-muted"
+            >
+              Admin
+            </Link>
+          )}
+        </div>
+        <div className="flex items-center">
+          <UserPen className="w-4 h-4" />
+          <Link href="/client" className="block rounded-lg p-2 hover:bg-muted">
+            Perfil
+          </Link>
+        </div>
       </nav>
 
       <button
