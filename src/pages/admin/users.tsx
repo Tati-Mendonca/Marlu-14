@@ -97,9 +97,7 @@ export default function UsersAdminPage() {
       <div className="flex-1 bg-[var(--color-primary)] p-6">
         <h1 className="text-3xl font-bold mb-6">Gerenciamento de Usuários</h1>
 
-        {/* Campo de busca */}
         <div className="mb-4 relative">
-          {/* <label className="">Buscar:</label> */}
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
           <input
             type="text"

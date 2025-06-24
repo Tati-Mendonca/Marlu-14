@@ -4,8 +4,9 @@ import { createBooking, getBookingsByMonth } from "@/services/booking";
 import { Booking, BookingInput } from "@/types/booking";
 import { Card } from "@/components/Card";
 import HamburgerMenu from "@/components/HamburguerMenu";
+import { withAuth } from "@/utils/Firebase-auth";
 
-export default function BookingPage() {
+function BookingPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -41,12 +42,10 @@ export default function BookingPage() {
   useEffect(() => {
     async function fetchBookings() {
       const results = await getBookingsByMonth(year, month);
-      // const results = await getBookingsByMonth(month);
       setBookings(results);
     }
 
     fetchBookings();
-    // }, [month]);
   }, [month, year]);
 
   return (
@@ -109,3 +108,5 @@ export default function BookingPage() {
     </>
   );
 }
+
+export default withAuth(BookingPage);

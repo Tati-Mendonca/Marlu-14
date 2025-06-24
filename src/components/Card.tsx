@@ -29,7 +29,7 @@ export function Card({ booking }: BookingCardProps) {
   }
 
   return (
-    <div className="w-full bg-gray-200 rounded-lg p-4 pt-2 mb-2 shadow-sm">
+    <div className="w-full bg-white rounded-lg p-4 pt-2 mb-2 shadow-sm">
       <header className="flex justify-between">
         <span>{customerName}</span>
         <span>R$ {Number(price).toFixed(2).replace(".", ",")}</span>
@@ -50,7 +50,7 @@ export function Card({ booking }: BookingCardProps) {
             })}
           </li>
         </ul>
-        <span className="text-black">{status}</span>
+        <span className="text-black text-sm">{status.toUpperCase()}</span>
 
         <div className="flex flex-col items-center justify-baseline">
           <Pencil

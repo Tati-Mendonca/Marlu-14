@@ -9,8 +9,9 @@ import { Customer, CustomerInput } from "@/types/customer";
 import { ChevronLeft, ChevronRight, Pencil, Trash } from "lucide-react";
 import CustomerModal from "@/components/CustomerModal";
 import HamburgerMenu from "@/components/HamburguerMenu";
+import { withAuth } from "@/utils/Firebase-auth";
 
-export default function CustomerPage() {
+function CustomerPage() {
   const ITEMS_PER_PAGE = 10;
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -175,3 +176,4 @@ export default function CustomerPage() {
     </>
   );
 }
+export default withAuth(CustomerPage);

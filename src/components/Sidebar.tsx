@@ -5,6 +5,7 @@ import {
   ChartNoAxesCombined,
   GalleryVerticalEnd,
   Lock,
+  LogOut,
   UserPen,
   Users,
 } from "lucide-react";
@@ -20,14 +21,17 @@ export default function Sidebar() {
     router.push("/login");
   };
   return (
-    <aside className="hidden w-64 flex-col bg-[var(--color-secondary)] p-4 shadow-lg md:flex">
-      <header className="flex items-center gap-2 text-primary mb-6">
-        <MapPin className="w-6 h-6 stroke-[2.5]" />
-        <h1 className="text-2xl font-semibold">Marlu 14</h1>
+    <aside className="hidden w-64 flex-col bg-[var(--color-secondary)] p-5 shadow-lg md:flex">
+      <header className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2 text-primary">
+          <MapPin className="w-6 h-6 stroke-[2.5]" />
+          <h1 className="text-xl font-bold">Marlu 14</h1>
+        </div>
       </header>
+      <hr className="mb-4 mt-[-15px] " />
 
-      <nav className="space-y-1">
-        <div className="flex items-center">
+      <ul className="flex flex-col gap-2">
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <ChartNoAxesCombined className="w-4 h-4" />
           <Link
             href="/dashboard"
@@ -35,24 +39,24 @@ export default function Sidebar() {
           >
             Dashboard
           </Link>
-        </div>
+        </li>
 
-        <div className="flex items-center">
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <GalleryVerticalEnd className="w-4 h-4" />
           <Link
-            href="/hystoric"
+            href="/historic"
             className="block rounded-lg p-2 hover:bg-muted"
           >
             Histórico
           </Link>
-        </div>
-        <div className="flex items-center">
+        </li>
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <CalendarDays className="w-4 h-4" />
           <Link href="/booking" className="block rounded-lg p-2 hover:bg-muted">
             Reservas
           </Link>
-        </div>
-        <div className="flex items-center">
+        </li>
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <Users className="w-4 h-4" />
           <Link
             href="/customer"
@@ -60,33 +64,34 @@ export default function Sidebar() {
           >
             Clientes
           </Link>
-        </div>
-
-        <div className="flex items-center">
-          <Lock className="w-4 h-4" />
+        </li>
+        <div className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           {role === "admin" && (
-            <Link
-              href="/admin/users"
-              className="block rounded-lg p-2 hover:bg-muted"
-            >
-              Admin
-            </Link>
+            <>
+              <Lock className="w-4 h-4" />
+              <Link
+                href="/admin/users"
+                className="block rounded-lg p-2 hover:bg-muted"
+              >
+                Admin
+              </Link>
+            </>
           )}
         </div>
-        <div className="flex items-center">
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <UserPen className="w-4 h-4" />
-          <Link href="/client" className="block rounded-lg p-2 hover:bg-muted">
+          <Link href="" className="block rounded-lg p-2 hover:bg-muted">
             Perfil
           </Link>
-        </div>
-      </nav>
+        </li>
 
-      <button
-        onClick={handleLogout}
-        className="mt-auto rounded-lg bg-primary px-4 py-2 border bg-[var(--color-primary)] hover:bg-[var(--color-mutedark)] font-bold"
-      >
-        Sair
-      </button>
+        <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
+          <LogOut className="w-4 h-4" />
+          <Link href="/" onClick={handleLogout}>
+            <span className="block px-4 py-2 rounded">Sair</span>
+          </Link>
+        </li>
+      </ul>
     </aside>
   );
 }
