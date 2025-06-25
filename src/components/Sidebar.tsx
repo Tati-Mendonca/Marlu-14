@@ -35,7 +35,7 @@ export default function Sidebar() {
           <ChartNoAxesCombined className="w-4 h-4" />
           <Link
             href="/dashboard"
-            className="block rounded-lg p-2 hover:bg-muted"
+            className="block rounded-lg py-2 hover:bg-muted"
           >
             Dashboard
           </Link>
@@ -45,14 +45,17 @@ export default function Sidebar() {
           <GalleryVerticalEnd className="w-4 h-4" />
           <Link
             href="/historic"
-            className="block rounded-lg p-2 hover:bg-muted"
+            className="block rounded-lg py-2 hover:bg-muted"
           >
             Histórico
           </Link>
         </li>
         <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <CalendarDays className="w-4 h-4" />
-          <Link href="/booking" className="block rounded-lg p-2 hover:bg-muted">
+          <Link
+            href="/booking"
+            className="block rounded-lg py-2 hover:bg-muted"
+          >
             Reservas
           </Link>
         </li>
@@ -60,7 +63,7 @@ export default function Sidebar() {
           <Users className="w-4 h-4" />
           <Link
             href="/customer"
-            className="block rounded-lg p-2 hover:bg-muted"
+            className="block rounded-lg py-2 hover:bg-muted"
           >
             Clientes
           </Link>
@@ -71,7 +74,7 @@ export default function Sidebar() {
               <Lock className="w-4 h-4" />
               <Link
                 href="/admin/users"
-                className="block rounded-lg p-2 hover:bg-muted"
+                className="block rounded-lg py-2 hover:bg-muted"
               >
                 Admin
               </Link>
@@ -80,7 +83,7 @@ export default function Sidebar() {
         </div>
         <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <UserPen className="w-4 h-4" />
-          <Link href="" className="block rounded-lg p-2 hover:bg-muted">
+          <Link href="" className="block rounded-lg py-2 hover:bg-muted">
             Perfil
           </Link>
         </li>
@@ -88,7 +91,7 @@ export default function Sidebar() {
         <li className="flex items-center gap-3 px-3 rounded-md hover:bg-white/10 transition-colors ">
           <LogOut className="w-4 h-4" />
           <Link href="/" onClick={handleLogout}>
-            <span className="block px-4 py-2 rounded">Sair</span>
+            <span className="block py-2 rounded">Sair</span>
           </Link>
         </li>
       </ul>

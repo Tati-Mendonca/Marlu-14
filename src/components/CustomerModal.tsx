@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Customer {
@@ -50,32 +51,53 @@ export default function CustomerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-md w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4">
-          {customerToEdit ? "Editar Cliente" : "Novo Cliente"}
-        </h2>
-        <input
-          type="text"
-          placeholder="Nome"
-          className="w-full p-2 border mb-2"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Documento"
-          className="w-full p-2 border mb-2"
-          value={document}
-          onChange={(e) => setDocument(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Telefone"
-          className="w-full p-2 border mb-4"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] transition-opacity duration-300">
+      <form className="bg-white p-6 rounded-2xl w-full max-w-md space-y-4">
+        <header className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold">
+            {customerToEdit ? "Editar Cliente" : "Novo Cliente"}
+          </h2>
+          <button type="button" onClick={onClose} aria-label="Fechar">
+            <X />
+          </button>
+        </header>
+        <div
+          className="relative flex flex-col
+         gap-3"
+        >
+          <label className="block">
+            <span className="text-sm">Nome:</span>
+            <input
+              type="text"
+              placeholder="Nome"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </label>
+          <label className="flex-1 text-sm">
+            <span className="text-sm">Documento:</span>
+            <input
+              type="text"
+              placeholder="Ex: 000.000.000-00"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              value={document}
+              onChange={(e) => setDocument(e.target.value)}
+            />
+          </label>
+
+          <label className="flex-1 text-sm">
+            <span className="text-sm">Telefone:</span>
+            <input
+              type="text"
+              placeholder="Ex: 9999-9999"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </label>
+        </div>
+
         <div className="flex justify-end gap-2">
           <button className="bg-gray-300 px-4 py-2 rounded" onClick={onClose}>
             Cancelar
@@ -87,7 +109,7 @@ export default function CustomerModal({
             Salvar
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

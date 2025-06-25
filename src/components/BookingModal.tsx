@@ -35,12 +35,12 @@ export default function BookingModal({
 
   useEffect(() => {
     if (bookingToEdit) {
-      setCustomerId(bookingToEdit.customerId);
       setCustomerName(bookingToEdit.customerName);
       setCheckIn(formatDate(bookingToEdit.checkIn));
       setCheckOut(formatDate(bookingToEdit.checkOut));
       setPrice(bookingToEdit.price);
       setStatus(bookingToEdit.status);
+      setCustomerId(bookingToEdit.customerId);
     } else {
       setCustomerId("");
       setCustomerName("");
@@ -53,21 +53,20 @@ export default function BookingModal({
 
   const handleCustomerSearch = async (name: string) => {
     setCustomerName(name);
-    setCustomerId("");
-
-    if (name.length >= 2) {
-      const results = await searchCustomersByName(name.trim());
-      setSuggestions(results);
-
-      const exactMatch = results.find(
-        (customer) => customer.name.toLowerCase() === name.trim().toLowerCase()
-      );
-
-      if (exactMatch) {
-        setCustomerId(exactMatch.id);
-      }
-    } else {
+    if (name.trim().length < 2) {
       setSuggestions([]);
+      return;
+    }
+    const term = name.trim().toUpperCase();
+    const results = await searchCustomersByName(term);
+    setSuggestions(results);
+    const exactMatch = results.find(
+      (customer) => customer.name.toLowerCase() === name.trim().toLowerCase()
+    );
+    if (exactMatch) {
+      setCustomerId(exactMatch.id);
+    } else {
+      setCustomerId("");
     }
   };
 
@@ -89,8 +88,10 @@ export default function BookingModal({
       Math.floor(diffInMs / (1000 * 60 * 60 * 24)),
       1
     );
+
     let finalCustomerId = customerId;
-    if (!finalCustomerId && customerName.trim().length > 0) {
+
+    if (!finalCustomerId) {
       try {
         const newCustomer = {
           name: customerName.trim(),
@@ -98,6 +99,7 @@ export default function BookingModal({
           phone: "",
           createdAt: new Date(),
         };
+
         const newCustomerId = await createCustomer(newCustomer);
         finalCustomerId = newCustomerId;
       } catch (err) {
@@ -109,6 +111,7 @@ export default function BookingModal({
       console.error("Erro: customerId está indefinido. Cancelando operação.");
       return;
     }
+
     const booking: BookingInput = {
       customerId: finalCustomerId,
       customerName: customerName.trim(),
@@ -134,9 +137,6 @@ export default function BookingModal({
       await createBooking(booking);
       onClose();
     }
-
-    // onSave(savedBooking);
-    //onClose();
   };
 
   if (!isOpen) return null;
@@ -169,6 +169,7 @@ export default function BookingModal({
               className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={customerName}
               onChange={(e) => handleCustomerSearch(e.target.value)}
+              disabled={!!bookingToEdit}
             />
           </label>
 

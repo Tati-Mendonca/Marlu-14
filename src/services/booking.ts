@@ -78,6 +78,7 @@ export async function getBookingsByMonth(year: number, month: number): Promise<B
   const data = doc.data();
   return {
     id: doc.id,
+    customerId: data.customerId,
     checkIn: data.checkIn.toDate(),
     checkOut: data.checkOut.toDate(),
     price: data.price,

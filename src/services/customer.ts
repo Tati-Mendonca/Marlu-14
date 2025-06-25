@@ -5,7 +5,7 @@ import { collection, addDoc, query, where, getDocs, deleteDoc, doc, updateDoc } 
 export const createCustomer = async (customer: CustomerInput) => {
   try {
     const customerRef = await addDoc(collection(db, "customers"), {
-      name: customer.name,
+      name: customer.name.toUpperCase(),
       document: customer.document,
       phone: customer.phone,
       createdAt: new Date(),
@@ -21,7 +21,7 @@ export const createCustomer = async (customer: CustomerInput) => {
 export async function updateCustomer( customerId: string, input: CustomerInput ): Promise<void> {
   const docRef = doc(db, "customers", customerId);
   await updateDoc(docRef, {
-    name: input.name,
+    name: input.name.toUpperCase(),
     document: input.document,
     phone: input.phone,
   });
@@ -40,7 +40,7 @@ export const searchCustomersByName = async (name: string): Promise<Customer[]> =
     const data = doc.data();
     return {
       id: doc.id,
-      name: data.name,
+      name: data.name.toUpperCase(),
       document: data.document,
       phone: data.phone,
       createdAt: data.createdAt.toDate(), 

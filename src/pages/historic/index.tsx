@@ -15,7 +15,9 @@ function HistoryPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    if (!searchTerm.trim()) return;
+    const term = searchTerm.trim().toUpperCase();
+
+    if (!term) return;
 
     setLoading(true);
     try {
@@ -23,8 +25,8 @@ function HistoryPage() {
 
       const q = query(
         bookingsRef,
-        where("customerName", ">=", searchTerm),
-        where("customerName", "<=", searchTerm + "\uf8ff")
+        where("customerName", ">=", term),
+        where("customerName", "<=", term + "\uf8ff")
       );
 
       const snapshot = await getDocs(q);
@@ -51,8 +53,8 @@ function HistoryPage() {
       <main className="bg-[var(--color-primary)] pt-18 px-4 pb-8 h-screen">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-semibold py-2">Histórico</h1>
-          <p className="text-sm text-gray-500 mb-4">
-            Busque pelo histórico de reservas de cada cliente:
+          <p className="text-sm text-gray-700 mb-4">
+            Busque pelo histórico de reservas de cada cliente.
           </p>
         </div>
 

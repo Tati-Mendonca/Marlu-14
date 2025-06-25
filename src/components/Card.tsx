@@ -9,9 +9,10 @@ import { useState } from "react";
 
 type BookingCardProps = {
   booking: Booking;
+  onEdit: (booking: Booking) => void;
 };
 
-export function Card({ booking }: BookingCardProps) {
+export function Card({ booking, onEdit }: BookingCardProps) {
   const { id, checkIn, checkOut, price, customerName, status } = booking;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -55,7 +56,7 @@ export function Card({ booking }: BookingCardProps) {
         <div className="flex flex-col items-center justify-baseline">
           <Pencil
             className="size-[14px] text-sm cursor-pointer"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => onEdit(booking)}
           />
           <X
             className="size-5 text-sm mt-1 cursor-pointer"

@@ -10,6 +10,7 @@ function BookingPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookingToEdit, setBookingToEdit] = useState<Booking | null>(null);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const monthNames = [
@@ -39,6 +40,28 @@ function BookingPage() {
     }
   }, []);
 
+  const handleEditBookingSubmit = async () => {
+    try {
+      setMessage("Reserva editada com sucesso!");
+
+      const results = await getBookingsByMonth(year, month);
+      setBookings(results);
+
+      setIsModalOpen(false);
+      setBookingToEdit(null);
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Erro ao editar reserva:", error);
+      }
+      setMessage("Erro ao editar reserva.");
+    }
+  };
+
+  const handleEditBooking = (booking: Booking) => {
+    setBookingToEdit(booking);
+    setIsModalOpen(true);
+  };
+
   useEffect(() => {
     async function fetchBookings() {
       const results = await getBookingsByMonth(year, month);
@@ -51,18 +74,17 @@ function BookingPage() {
   return (
     <>
       <HamburgerMenu />
-      <main className="min-h-screen bg-[var(--color-primary)] flex flex-col items-center pt-18 px-4 pb-8 ">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold py-2">Página de Reservas</h1>
-          <p className="text-sm text-gray-500 mb-4">
-            Informação com todas as reservas blá blá blá blá blá blá blá blá
-            blá:
+      <main className="min-h-screen bg-[var(--color-primary)] flex flex-col items-center pt-18 px-4 pb-8">
+        <div className="text-center w-[25em] mb-6">
+          <h1 className="text-2xl font-semibold py-2">Localize Reservas</h1>
+          <p className="text-sm text-gray-700 mb-4">
+            Consulte reservas referentes a data selecionada abaixo.
           </p>
           <div className="flex justify-end items-center mb-4">
             <label>
-              Selecione o mês:
+              Mês:
               <select
-                className="py-2 bg-white cursor-pointer rounded mx-1"
+                className="px-1 py-1 bg-white cursor-pointer rounded mx-2"
                 value={month}
                 onChange={(e) => setMonth(Number(e.target.value))}
               >
@@ -75,18 +97,23 @@ function BookingPage() {
             </label>
 
             <label>
-              e ano:
+              Ano:
               <input
                 type="text"
-                className="p-2 rounded bg-white cursor-pointer w-13 mx-1"
+                className="px-2 py-1 rounded bg-white cursor-pointer w-13 mx-1"
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
               ></input>
             </label>
           </div>
+          {message && <p className="my-4 text-sm text-gray-700">{message}</p>}
 
           {bookings.map((booking) => (
-            <Card key={booking.id} booking={booking} />
+            <Card
+              key={booking.id}
+              booking={booking}
+              onEdit={handleEditBooking}
+            />
           ))}
 
           <button
@@ -95,14 +122,16 @@ function BookingPage() {
           >
             Nova Reserva
           </button>
-
-          {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
         </div>
 
         <BookingModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleCreateBooking}
+          onClose={() => {
+            setIsModalOpen(false);
+            setBookingToEdit(null);
+          }}
+          onSave={bookingToEdit ? handleEditBookingSubmit : handleCreateBooking}
+          bookingToEdit={bookingToEdit}
         />
       </main>
     </>

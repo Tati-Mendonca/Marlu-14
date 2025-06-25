@@ -82,7 +82,7 @@ function CustomerPage() {
         <section className="w-full md:w-auto max-w-5xl">
           <header className="text-center mb-6">
             <h1 className="text-2xl font-semibold">Cadastro de Clientes</h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-700 mt-1">
               Informações essenciais dos clientes que já alugaram o apartamento:
             </p>
           </header>
