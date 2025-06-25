@@ -6,6 +6,7 @@ import { normalizeDate } from "@/utils/Date";
 import { Pencil, X } from "lucide-react";
 import BookingModal from "./BookingModal";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 type BookingCardProps = {
   booking: Booking;
@@ -22,10 +23,10 @@ export function Card({ booking, onEdit }: BookingCardProps) {
 
     try {
       await deleteBooking(id);
-      alert("Reserva excluída com sucesso.");
+      toast.success("Reserva excluída com sucesso.");
       window.location.reload();
     } catch (err) {
-      console.log("Erro ao excluir reserva.", err);
+      toast.error("Erro ao excluir reserva. " + err);
     }
   }
 

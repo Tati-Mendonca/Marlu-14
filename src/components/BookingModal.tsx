@@ -6,6 +6,7 @@ import { Customer } from "@/types/customer";
 import { normalizeDate } from "@/utils/Date";
 import { X } from "lucide-react";
 import { createBooking, updateBooking } from "@/services/booking";
+import toast from "react-hot-toast";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -103,12 +104,12 @@ export default function BookingModal({
         const newCustomerId = await createCustomer(newCustomer);
         finalCustomerId = newCustomerId;
       } catch (err) {
-        console.error("Erro ao criar cliente automaticamente:", err);
+        toast.error("Erro ao criar cliente automaticamente: " + err);
         return;
       }
     }
     if (!finalCustomerId) {
-      console.error("Erro: customerId está indefinido. Cancelando operação.");
+      toast.error("Erro: customerId está indefinido. Cancelando operação.");
       return;
     }
 

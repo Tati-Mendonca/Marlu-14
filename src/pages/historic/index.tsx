@@ -8,6 +8,7 @@ import { db } from "@/config/firebase";
 import HamburgerMenu from "@/components/HamburguerMenu";
 import { normalizeDate } from "@/utils/Date";
 import { withAuth } from "@/utils/Firebase-auth";
+import toast from "react-hot-toast";
 
 function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +38,7 @@ function HistoryPage() {
 
       setResults(data);
     } catch (error) {
-      console.error("Erro ao buscar reservas:", error);
+      toast.error("Erro ao buscar reservas: " + error);
     } finally {
       setLoading(false);
     }

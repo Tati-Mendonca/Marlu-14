@@ -5,6 +5,7 @@ import { Booking, BookingInput } from "@/types/booking";
 import { Card } from "@/components/Card";
 import HamburgerMenu from "@/components/HamburguerMenu";
 import { withAuth } from "@/utils/Firebase-auth";
+import { toast } from "react-hot-toast";
 
 function BookingPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -34,7 +35,7 @@ function BookingPage() {
       setMessage("Reserva criada com sucesso!");
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
-        console.error("Erro ao salvar reserva:", error);
+        toast.error("Erro ao salvar reserva " + error);
       }
       setMessage("Erro ao salvar reserva.");
     }
@@ -51,7 +52,7 @@ function BookingPage() {
       setBookingToEdit(null);
     } catch (error) {
       if (process.env.NODE_ENV === "development") {
-        console.error("Erro ao editar reserva:", error);
+        toast.error("Erro ao editar reserva " + error);
       }
       setMessage("Erro ao editar reserva.");
     }

@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight, Pencil, Trash } from "lucide-react";
 import CustomerModal from "@/components/CustomerModal";
 import HamburgerMenu from "@/components/HamburguerMenu";
 import { withAuth } from "@/utils/Firebase-auth";
+import toast from "react-hot-toast";
 
 function CustomerPage() {
   const ITEMS_PER_PAGE = 10;
@@ -55,8 +56,7 @@ function CustomerPage() {
         setCustomers((prev) => [...prev, newCustomer]);
       }
     } catch (error) {
-      console.error("Erro ao salvar cliente:", error);
-      alert("Erro ao salvar o cliente. Tente novamente.");
+      toast.error("Erro ao salvar o cliente. Tente novamente! " + error);
     }
   };
 
@@ -70,8 +70,7 @@ function CustomerPage() {
       await deleteCustomer(id);
       setCustomers((prev) => prev.filter((c) => c.id !== id));
     } catch (error) {
-      console.error("Erro ao excluir cliente:", error);
-      alert("Não foi possível excluir o cliente.");
+      toast.error("Não foi possível excluir o cliente. " + error);
     }
   };
 
