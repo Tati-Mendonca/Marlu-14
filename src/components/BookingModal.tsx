@@ -7,6 +7,7 @@ import { normalizeDate } from "@/utils/Date";
 import { X } from "lucide-react";
 import { createBooking, updateBooking } from "@/services/booking";
 import toast from "react-hot-toast";
+import { isCheckOutAfterCheckIn } from "@/utils/Validators";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -78,10 +79,31 @@ export default function BookingModal({
   };
 
   const handleSubmit = async () => {
+    if (!customerName.trim()) {
+      toast.error("O nome do cliente é obrigatório.");
+      return;
+    }
+
+    if (!checkIn || !checkOut) {
+      toast.error("As datas de entrada e saída são obrigatórias.");
+      return;
+    }
+
+    if (!isCheckOutAfterCheckIn(checkIn, checkOut)) {
+      toast.error("A data de saída deve ser posterior à data de entrada.");
+      return;
+    }
+
+    if (!price || isNaN(price) || price <= 0) {
+      toast.error("O preço deve ser maior que zero.");
+      return;
+    }
+
     const auth = getAuth();
     const user = auth.currentUser;
     const userId = user?.uid || "usuario-desconhecido";
     const bookingByName = user?.displayName || user?.email || "desconhecido";
+
     const checkInDate = new Date(checkIn + "T00:00:00");
     const checkOutDate = new Date(checkOut + "T00:00:00");
     const diffInMs = checkOutDate.getTime() - checkInDate.getTime();
@@ -108,6 +130,7 @@ export default function BookingModal({
         return;
       }
     }
+
     if (!finalCustomerId) {
       toast.error("Erro: customerId está indefinido. Cancelando operação.");
       return;
@@ -125,21 +148,21 @@ export default function BookingModal({
       status,
     };
 
-    if (bookingToEdit && bookingToEdit.id) {
-      const updatedBooking = {
-        ...booking,
-      };
+    try {
+      if (bookingToEdit && bookingToEdit.id) {
+        await updateBooking(bookingToEdit.id, booking);
+        onSave(booking);
+      } else {
+        await createBooking(booking);
+      }
 
-      await updateBooking(bookingToEdit.id, updatedBooking);
-      onSave(updatedBooking);
+      toast.success("Reserva salva com sucesso!");
       onClose();
-      return;
-    } else {
-      await createBooking(booking);
-      onClose();
+    } catch (err) {
+      toast.error("Erro ao salvar reserva.");
+      console.error(err);
     }
   };
-
   if (!isOpen) return null;
 
   return (

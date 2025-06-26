@@ -28,3 +28,12 @@ export function isValidCPF(cpf: string): boolean {
   if (remainder === 10 || remainder === 11) remainder = 0;
   return remainder === parseInt(cpf.substring(10, 11));
 }
+
+export function isCheckOutAfterCheckIn(checkIn: string, checkOut: string): boolean {
+  if (!checkIn || !checkOut) return false;
+
+  const checkInDate = new Date(checkIn + "T00:00:00");
+  const checkOutDate = new Date(checkOut + "T00:00:00");
+
+  return checkOutDate > checkInDate;
+}
