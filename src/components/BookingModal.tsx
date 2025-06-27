@@ -166,10 +166,10 @@ export default function BookingModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] transition-opacity duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] px-2 sm:px-4">
       <form
         method="dialog"
-        className="bg-white p-6 rounded-2xl w-full max-w-md space-y-4"
+        className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-md space-y-4"
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit();
@@ -217,7 +217,7 @@ export default function BookingModal({
             Entrada
             <input
               type="date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={checkIn}
               onChange={(e) => setCheckIn(e.target.value)}
             />
@@ -227,7 +227,7 @@ export default function BookingModal({
             Saida
             <input
               type="date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-secondary)]"
               value={checkOut}
               onChange={(e) => setCheckOut(e.target.value)}
             />
@@ -262,7 +262,7 @@ export default function BookingModal({
         </fieldset>
 
         <footer className="flex justify-end">
-          <button className="bg-[var(--color-secondary)] hover:bg-[var(--color-secondary2)] text-white px-4 py-2 rounded disabled:opacity-50">
+          <button className="bg-[var(--color-secondary)] hover:bg-[var(--color-secondary2)] text-white px-4 py-2 rounded-lg disabled:opacity-50">
             Salvar
           </button>
         </footer>

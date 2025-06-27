@@ -75,7 +75,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`flex w-full items-center justify-center gap-2 rounded-lg border border-muted bg-[var(--color-secondary)] text-white px-4 py-2 text-foreground hover:bg-muted/10 ${
+            className={`flex w-full items-center justify-center gap-2 rounded-lg border border-muted bg-[var(--color-secondary)] text-white px-4 py-2 text-foreground hover:bg-[var(--color-secondary2)] ${
               loading ? "opacity-60 cursor-not-allowed" : ""
             }`}
           >

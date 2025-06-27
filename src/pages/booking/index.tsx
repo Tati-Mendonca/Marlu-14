@@ -6,6 +6,7 @@ import { Card } from "@/components/Card";
 import HamburgerMenu from "@/components/HamburguerMenu";
 import { withAuth } from "@/utils/Firebase-auth";
 import { toast } from "react-hot-toast";
+import Button from "@/components/Button";
 
 function BookingPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -117,14 +118,8 @@ function BookingPage() {
             />
           ))}
 
-          <button
-            // onClick={() => setIsModalOpen(true)}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Nova Reserva
-          </button>
+          <Button onClick={() => setIsModalOpen(true)} label="Nova reserva" />
         </div>
-
         <BookingModal
           isOpen={isModalOpen}
           onClose={() => {

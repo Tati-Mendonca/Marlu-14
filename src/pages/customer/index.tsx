@@ -11,6 +11,7 @@ import CustomerModal from "@/components/CustomerModal";
 import HamburgerMenu from "@/components/HamburguerMenu";
 import { withAuth } from "@/utils/Firebase-auth";
 import toast from "react-hot-toast";
+import Button from "@/components/Button";
 
 function CustomerPage() {
   const ITEMS_PER_PAGE = 10;
@@ -162,6 +163,7 @@ function CustomerPage() {
             </button>
           </div>
         </section>
+        <Button onClick={() => setIsModalOpen(true)} label="Nova Reserva" />
         <CustomerModal
           isOpen={isModalOpen}
           onClose={() => {

@@ -67,7 +67,7 @@ export default function CustomerModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] transition-opacity duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-primary)] px-2 sm:px-4">
       <form className="bg-white p-6 rounded-2xl w-full max-w-md space-y-4">
         <header className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">
@@ -77,10 +77,8 @@ export default function CustomerModal({
             <X />
           </button>
         </header>
-        <div
-          className="relative flex flex-col
-         gap-3"
-        >
+
+        <div className="relative">
           <label className="block">
             <span className="text-sm">Nome:</span>
             <input
