@@ -93,14 +93,14 @@ export default function Dashboard() {
             <div className="mt-6 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => setBookingModalOpen(true)}
-                className="w-full sm:w-auto flex-1 flex justify-center items-center border-2 rounded-xl bg-[var(--color-secondary)] text-white hover:bg-[var(--color-secondary2)] outline-none transition px-6 py-4 shadow-md text-center text-lg font-semibold"
+                className="w-full sm:w-auto flex-1 flex justify-center items-center  rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary2)] outline-none transition px-6 py-4 shadow-md text-center text-lg font-semibold cursor-pointer"
               >
                 Nova Reserva
               </button>
 
               <button
                 onClick={() => setCustomerModalOpen(true)}
-                className="w-full sm:w-auto flex-1 flex justify-center items-center border-2 rounded-xl bg-[var(--color-secondary)] text-white hover:bg-[var(--color-secondary2)] outline-none transition px-6 py-4 shadow-md text-center text-lg font-semibold"
+                className="w-full sm:w-auto flex-1 flex justify-center items-center  rounded-xl bg-[var(--color-secondary)] hover:bg-[var(--color-secondary2)] outline-none transition px-6 py-4 shadow-md text-center text-lg font-semibold cursor-pointer"
               >
                 Novo Cliente
               </button>

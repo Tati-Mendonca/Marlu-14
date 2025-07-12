@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { createCustomer, searchCustomersByName } from "@/services/customer";
 import { getAuth } from "firebase/auth";
