@@ -1,15 +1,11 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
-    transform: {
-        '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
-    },
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
-    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-    transformIgnorePatterns: [
-        '/node_modules/(?!(@firebase|@testing-library|jest-fetch-mock)/)'
-    ],
+    transform: {
+        '^.+\\.(ts|tsx)$': ['babel-jest', { configFile: './babel-jest.config.js' }],
+    },
 };
-

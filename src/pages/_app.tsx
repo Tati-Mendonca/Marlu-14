@@ -1,3 +1,4 @@
+import React from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";

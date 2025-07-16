@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { deleteBooking } from "@/services/booking";
 import { Booking } from "@/types/booking";
 import { normalizeDate } from "@/utils/Date";

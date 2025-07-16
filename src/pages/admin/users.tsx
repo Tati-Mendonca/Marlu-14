@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useState } from "react";
 import { getIdToken, onAuthStateChanged, User } from "firebase/auth";
 import { useRouter } from "next/router";

@@ -1,3 +1,4 @@
+import React from "react";
 import Head from "next/head";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useState } from "react";

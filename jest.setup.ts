@@ -10,3 +10,4 @@ jest.mock('firebase/firestore');
 beforeEach(() => {
   fetchMock.resetMocks();
 });
+

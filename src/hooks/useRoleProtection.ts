@@ -28,7 +28,7 @@ export function useRoleProtection(allowedRoles: string[] = []) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [allowedRoles, router]);
 
   return { loading, authorized };
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import { auth } from "@/config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
