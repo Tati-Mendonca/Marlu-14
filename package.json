@@ -46,5 +46,10 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.4.0",
     "typescript": "^5"
+  },
+  "overrides": {
+  "@testing-library/react": {
+    "react": "^18.3.1"
   }
+  } 
 }
