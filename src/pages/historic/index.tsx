@@ -10,6 +10,7 @@ import HamburgerMenu from "@/components/HamburguerMenu";
 import { normalizeDate } from "@/utils/Date";
 import { withAuth } from "@/utils/Firebase-auth";
 import toast from "react-hot-toast";
+import { normalize } from "@/utils/normalize";
 
 function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,7 +18,7 @@ function HistoryPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    const term = searchTerm.trim().toUpperCase();
+    const term = normalize(searchTerm);
 
     if (!term) return;
 
@@ -27,8 +28,8 @@ function HistoryPage() {
 
       const q = query(
         bookingsRef,
-        where("customerName", ">=", term),
-        where("customerName", "<=", term + "\uf8ff")
+        where("searchName", ">=", term),
+        where("searchName", "<=", term + "\uf8ff")
       );
 
       const snapshot = await getDocs(q);

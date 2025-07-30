@@ -9,6 +9,7 @@ import { X } from "lucide-react";
 import { createBooking, updateBooking } from "@/services/booking";
 import toast from "react-hot-toast";
 import { isCheckOutAfterCheckIn } from "@/utils/Validators";
+import { normalize } from "@/utils/normalize";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -140,6 +141,7 @@ export default function BookingModal({
     const booking: BookingInput = {
       customerId: finalCustomerId,
       customerName: customerName.trim(),
+      searchName: normalize(customerName),
       userId,
       bookingByName,
       checkIn: normalizeDate(checkIn),
