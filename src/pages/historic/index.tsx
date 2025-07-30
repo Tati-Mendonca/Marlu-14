@@ -10,7 +10,7 @@ import HamburgerMenu from "@/components/HamburguerMenu";
 import { normalizeDate } from "@/utils/Date";
 import { withAuth } from "@/utils/Firebase-auth";
 import toast from "react-hot-toast";
-import { normalize } from "@/utils/normalize";
+import { normalize } from "@/utils/SearchNormalize";
 
 function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState("");

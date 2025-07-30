@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 import { createBooking, updateBooking } from "@/services/booking";
 import toast from "react-hot-toast";
 import { isCheckOutAfterCheckIn } from "@/utils/Validators";
-import { normalize } from "@/utils/normalize";
+import { normalize } from "@/utils/SearchNormalize";
 
 interface BookingModalProps {
   isOpen: boolean;
